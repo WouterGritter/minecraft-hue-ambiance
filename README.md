@@ -5,7 +5,7 @@ A plugin to reflect the minecraft world in Philips Hue color lighting.
 This plugin aims to update Philips Hue color lights according to in-game events. Currently the following things have an
 effect on the light color:
 
-- Current biome
+- Current biome (colors synthesised by Chat-GPT!)
 - Taking damage
 - Standing nearby fire
 - Sleeping
@@ -15,6 +15,9 @@ More are being added...
 
 The plugin implements a priority system to give certain effects priority over others (temporary effects generally have a
 high priority, while background effects generally have a low priority).
+
+Note: The plugin currently only supports one hardcoded player and hue room name. I'll be adding support for multiple
+players later (something like a command to add light identifiers, eg. hue room names/light names per player).
 
 # Connecting to hue bridge
 
