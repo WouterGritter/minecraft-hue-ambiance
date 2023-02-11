@@ -1,0 +1,7 @@
+main: me.woutergritter.hueambiance.HueAmbiance
+name: hue-ambiance
+version: 0.1
+api-version: 1.19
+commands:
+  connecthue:
+    description: 'Connect to the Hue bridge.'
