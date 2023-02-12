@@ -1,13 +1,14 @@
 package me.woutergritter.hueambiance.coloreffect;
 
 import me.woutergritter.hueambiance.coloreffect.effects.ColorEffect;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static me.woutergritter.hueambiance.HueAmbiance.getPlugin;
 
 public class ColorEffectHelpers {
 
@@ -22,7 +23,7 @@ public class ColorEffectHelpers {
                 .collect(Collectors.toSet());
     }
 
-    private static Collection<Class<? extends ColorEffect>> findRegisteredColorEffectClasses() {
+    public static Collection<Class<? extends ColorEffect>> findRegisteredColorEffectClasses() {
         return new Reflections("me.woutergritter.hueambiance.coloreffect.effects")
                 .getTypesAnnotatedWith(RegisteredColorEffect.class)
                 .stream()
@@ -31,7 +32,7 @@ public class ColorEffectHelpers {
                 .collect(Collectors.toSet());
     }
 
-    private static Optional<ColorEffect> instantiateColorEffect(Class<? extends ColorEffect> clazz, Player player) {
+    public static Optional<ColorEffect> instantiateColorEffect(Class<? extends ColorEffect> clazz, Player player) {
         try {
             var colorEffect = clazz.getConstructor().newInstance();
             return Optional.of(colorEffect);
@@ -44,7 +45,7 @@ public class ColorEffectHelpers {
         } catch (Exception ignore) {
         }
 
-        Bukkit.getLogger().warning("Could not instantiate ColorEffect " + clazz.getName() + ". Does it have the right constructor?");
+        getPlugin().getLogger().warning("Could not instantiate ColorEffect " + clazz.getName() + ". Does it have the right constructor?");
         return Optional.empty();
     }
 }

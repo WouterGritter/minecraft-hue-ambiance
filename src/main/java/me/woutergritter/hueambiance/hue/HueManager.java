@@ -5,7 +5,6 @@ import io.github.zeroone3010.yahueapi.HueBridge;
 import io.github.zeroone3010.yahueapi.Room;
 import io.github.zeroone3010.yahueapi.State;
 import io.github.zeroone3010.yahueapi.discovery.HueBridgeDiscoveryService;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;
@@ -96,7 +95,7 @@ public class HueManager {
 
         try {
             String apiKey = apiKeyFuture.get();
-            Bukkit.getLogger().info("Obtained Hue API key " + apiKey);
+            getPlugin().getLogger().info("Obtained Hue API key " + apiKey);
             return Optional.of(apiKey);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

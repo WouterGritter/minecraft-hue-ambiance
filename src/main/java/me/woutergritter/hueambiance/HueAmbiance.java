@@ -3,7 +3,6 @@ package me.woutergritter.hueambiance;
 import me.woutergritter.hueambiance.coloreffect.ColorManager;
 import me.woutergritter.hueambiance.commands.ConnecthueCommand;
 import me.woutergritter.hueambiance.hue.HueManager;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Set;
@@ -23,9 +22,9 @@ public class HueAmbiance extends JavaPlugin {
         hueManager = new HueManager();
         boolean connectedToBridge = hueManager.connect();
         if (connectedToBridge) {
-            Bukkit.getLogger().info("Connected to Hue bridge.");
+            getLogger().info("Connected to Hue bridge.");
         } else {
-            Bukkit.getLogger().info("Could not connect to Hue bridge.");
+            getLogger().info("Could not connect to Hue bridge.");
         }
 
         new ColorManager();

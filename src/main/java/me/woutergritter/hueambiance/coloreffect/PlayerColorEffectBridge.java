@@ -1,7 +1,6 @@
 package me.woutergritter.hueambiance.coloreffect;
 
 import me.woutergritter.hueambiance.coloreffect.effects.ColorEffect;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -51,7 +50,7 @@ public class PlayerColorEffectBridge {
                 getPlugin().getHueManager().updateColor(player, color);
                 this.previousColor = color;
             } catch (Exception e) {
-                Bukkit.getLogger().warning("Could not update color. See stack-trace.");
+                getPlugin().getLogger().warning("Could not update color. See stack-trace.");
                 e.printStackTrace();
             }
         }
