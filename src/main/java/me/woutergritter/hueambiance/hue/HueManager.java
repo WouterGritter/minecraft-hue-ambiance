@@ -38,15 +38,19 @@ public class HueManager {
         Room room = hue.getRoomByName("Woonkamer")
                 .orElseThrow();
 
-        float[] hsb = java.awt.Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        room.setState(
-                State.builder()
-                        .hue((int) (hsb[0] * 65280))
-                        .saturation((int) (hsb[1] * 254))
-                        .brightness(254)
-                        .transitionTime(1)
-                        .on()
-        );
+        if (color.getRed() == 0 && color.getGreen() == 0 && color.getBlue() == 0) {
+            room.turnOff();
+        } else {
+            float[] hsb = java.awt.Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+            room.setState(
+                    State.builder()
+                            .hue((int) (hsb[0] * 65280))
+                            .saturation((int) (hsb[1] * 254))
+                            .brightness(254)
+                            .transitionTime(1)
+                            .on()
+            );
+        }
 
         System.out.println("UPDATING STATE");
     }
