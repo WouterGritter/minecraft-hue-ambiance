@@ -27,7 +27,7 @@ public class DamageColorEffect extends ListenerColorEffect {
     @Override
     public boolean isActive() {
         long elapsed = System.currentTimeMillis() - lastDamage;
-        return elapsed < 200;
+        return elapsed < 750;
     }
 
     @Override

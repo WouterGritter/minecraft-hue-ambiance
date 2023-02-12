@@ -28,7 +28,15 @@ public class ThunderColorEffect extends ListenerColorEffect {
     @Override
     public boolean isActive() {
         long elapsed = System.currentTimeMillis() - lastLightningStrike;
-        return elapsed < 200;
+        if (elapsed < 500) {
+            return true;
+        } else if (elapsed < 1000) {
+            return false;
+        } else if (elapsed < 1500) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

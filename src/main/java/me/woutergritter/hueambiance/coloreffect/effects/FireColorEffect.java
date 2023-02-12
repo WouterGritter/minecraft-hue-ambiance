@@ -12,12 +12,11 @@ import static me.woutergritter.hueambiance.util.NearbyBlocks.getNearbyBlockOfTyp
 public class FireColorEffect implements ColorEffect {
 
     private final Player player;
-
-    private long lastColorChange;
-    private Color color;
+    private final ColorRandomizer randomizer;
 
     public FireColorEffect(Player player) {
         this.player = player;
+        this.randomizer = new ColorRandomizer(new Color(252, 53, 3), new Color(252, 181, 3), 2000);
     }
 
     @Override
@@ -27,25 +26,11 @@ public class FireColorEffect implements ColorEffect {
 
     @Override
     public Color getColor() {
-        long elapsed = System.currentTimeMillis() - lastColorChange;
-        if (color == null || elapsed > 1000) {
-            color = randomFireColor();
-            lastColorChange = System.currentTimeMillis();
-        }
-
-        return color;
+        return randomizer.getColor();
     }
 
     @Override
     public int getPriority() {
         return 12;
-    }
-
-    private Color randomFireColor() {
-        return new Color(
-                252,
-                (int) (53 + Math.random() * 128),
-                3
-        );
     }
 }

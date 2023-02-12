@@ -1,8 +1,12 @@
-package me.woutergritter.hueambiance;
+package me.woutergritter.hueambiance.hue;
 
-import io.github.zeroone3010.yahueapi.*;
+import io.github.zeroone3010.yahueapi.Hue;
+import io.github.zeroone3010.yahueapi.HueBridge;
+import io.github.zeroone3010.yahueapi.Room;
+import io.github.zeroone3010.yahueapi.State;
 import io.github.zeroone3010.yahueapi.discovery.HueBridgeDiscoveryService;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -16,20 +20,35 @@ public class HueManager {
 
     private Hue hue;
 
-    public void updateColor(float red, float green, float blue) {
+    public boolean canSetStateFor(OfflinePlayer player) {
+        if (hue == null) {
+            return false;
+        }
+
+        // TODO: Add support for multiple players.
+        return "TheWGBbroz".equals(player.getName());
+    }
+
+    public void updateColor(OfflinePlayer player, java.awt.Color color) {
+        if (hue == null) {
+            throw new IllegalStateException("Connection to the Hue bridge is not set up yet.");
+        }
+
+        // TODO: Add support for multiple players.
         Room room = hue.getRoomByName("Woonkamer")
                 .orElseThrow();
 
-        room.getLights().forEach(light -> updateColor(light, red, green, blue));
-    }
-
-    private void updateColor(Light light, float red, float green, float blue) {
-        light.setBrightness(100);
-        light.setState(
+        float[] hsb = java.awt.Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        room.setState(
                 State.builder()
-                        .color(Color.of(red, green, blue))
+                        .hue((int) (hsb[0] * 65280))
+                        .saturation((int) (hsb[1] * 254))
+                        .brightness(254)
+                        .transitionTime(1)
                         .on()
         );
+
+        System.out.println("UPDATING STATE");
     }
 
     public void storeCredentials(String hueAddress, String apiKey) {

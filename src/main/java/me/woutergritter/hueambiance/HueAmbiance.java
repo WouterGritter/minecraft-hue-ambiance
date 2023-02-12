@@ -2,6 +2,7 @@ package me.woutergritter.hueambiance;
 
 import me.woutergritter.hueambiance.coloreffect.ColorManager;
 import me.woutergritter.hueambiance.commands.ConnecthueCommand;
+import me.woutergritter.hueambiance.hue.HueManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
