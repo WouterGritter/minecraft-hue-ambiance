@@ -11,7 +11,7 @@ effect on the light color:
 - Sleeping
 - Thunder lightning strike
 
-More are being added...
+More are being added... If you want a specific color effect added, feel free to implement it and open a pull-request!
 
 The plugin implements a priority system to give certain effects priority over others (temporary effects generally have a
 high priority, while background effects generally have a low priority).
@@ -39,3 +39,12 @@ in a trusted environment.
 `/hueenable <enable | disable>` - Enable or disable the Hue ambiance functionality.
 
 `/hueroom <room>` - Set the linked room (autocomplete available).
+
+# The future
+
+In the future I would like to add/change the following features. If you need any of these features, or if you need a
+feature that's not listed here, feel free to implement it and open a pull-request!
+
+- Remote Hue bridge support (through tunneling or the Hue API)
+- Add permissions
+- Save and restore the state of the lamps
