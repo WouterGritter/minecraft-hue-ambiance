@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
+import static me.woutergritter.hueambiance.HueAmbiance.getPlugin;
+
 public abstract class Command implements CommandExecutor, TabCompleter {
 
     private final String command;
@@ -43,7 +45,7 @@ public abstract class Command implements CommandExecutor, TabCompleter {
         var context = new CommandContext(sender, args);
 
         if (runInThread) {
-            new Thread(() -> executeSafely(context)).start();
+            getPlugin().getThreadPool().submit(() -> executeSafely(context));
         } else {
             executeSafely(context);
         }

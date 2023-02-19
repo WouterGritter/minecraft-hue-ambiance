@@ -8,11 +8,14 @@ import me.woutergritter.hueambiance.hue.HueManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HueAmbiance extends JavaPlugin {
 
     private static HueAmbiance instance;
 
+    private ExecutorService threadPool;
     private HueManager hueManager;
     private ColorManager colorManager;
 
@@ -21,6 +24,8 @@ public class HueAmbiance extends JavaPlugin {
         instance = this;
 
         saveDefaultConfig();
+
+        threadPool = Executors.newCachedThreadPool();
 
         hueManager = new HueManager();
         boolean connectedToBridge = hueManager.connect();
@@ -42,7 +47,12 @@ public class HueAmbiance extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        threadPool.shutdown();
         instance = null;
+    }
+
+    public ExecutorService getThreadPool() {
+        return threadPool;
     }
 
     public HueManager getHueManager() {

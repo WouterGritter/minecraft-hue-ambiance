@@ -8,11 +8,13 @@ import io.github.zeroone3010.yahueapi.discovery.HueBridgeDiscoveryService;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
+import static java.awt.Color.RGBtoHSB;
 import static me.woutergritter.hueambiance.HueAmbiance.getPlugin;
 import static org.bukkit.persistence.PersistentDataType.INTEGER;
 import static org.bukkit.persistence.PersistentDataType.STRING;
@@ -37,7 +39,7 @@ public class HueManager {
                 getRoomFor(player).isPresent();
     }
 
-    public void updateColor(Player player, java.awt.Color color) {
+    public void updateColor(Player player, Color color) {
         if (hue == null) {
             throw new IllegalStateException("Connection to the Hue bridge is not set up yet.");
         }
@@ -47,11 +49,14 @@ public class HueManager {
         }
 
         Room room = getRoomFor(player).orElseThrow();
+        getPlugin().getThreadPool().submit(() -> updateColor(room, color));
+    }
 
+    private void updateColor(Room room, Color color) {
         if (color.getRed() == 0 && color.getGreen() == 0 && color.getBlue() == 0) {
             room.turnOff();
         } else {
-            float[] hsb = java.awt.Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+            float[] hsb = RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
             room.setState(
                     State.builder()
                             .hue((int) (hsb[0] * 65280))
