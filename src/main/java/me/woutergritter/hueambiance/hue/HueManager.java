@@ -5,37 +5,48 @@ import io.github.zeroone3010.yahueapi.HueBridge;
 import io.github.zeroone3010.yahueapi.Room;
 import io.github.zeroone3010.yahueapi.State;
 import io.github.zeroone3010.yahueapi.discovery.HueBridgeDiscoveryService;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 import static me.woutergritter.hueambiance.HueAmbiance.getPlugin;
+import static org.bukkit.persistence.PersistentDataType.INTEGER;
+import static org.bukkit.persistence.PersistentDataType.STRING;
 
 public class HueManager {
 
     private static final String APP_NAME = "wgplugin";
 
+    private final NamespacedKey hueAmbianceEnabledKey;
+    private final NamespacedKey hueAmbianceRoomNameKey;
+
     private Hue hue;
 
-    public boolean canSetStateFor(OfflinePlayer player) {
-        if (hue == null) {
-            return false;
-        }
-
-        // TODO: Add support for multiple players.
-        return "TheWGBbroz".equals(player.getName());
+    public HueManager() {
+        hueAmbianceEnabledKey = new NamespacedKey(getPlugin(), "hueAmbianceEnabled");
+        hueAmbianceRoomNameKey = new NamespacedKey(getPlugin(), "hueAmbianceRoomName");
     }
 
-    public void updateColor(OfflinePlayer player, java.awt.Color color) {
+    public boolean canSetStateFor(Player player) {
+        return hue != null &&
+                isEnabledFor(player) &&
+                getRoomFor(player).isPresent();
+    }
+
+    public void updateColor(Player player, java.awt.Color color) {
         if (hue == null) {
             throw new IllegalStateException("Connection to the Hue bridge is not set up yet.");
         }
 
-        // TODO: Add support for multiple players.
-        Room room = hue.getRoomByName("Woonkamer")
-                .orElseThrow();
+        if (!canSetStateFor(player)) {
+            throw new IllegalStateException("Can't update state for this player. Please call canSetStateFor first.");
+        }
+
+        Room room = getRoomFor(player).orElseThrow();
 
         if (color.getRed() == 0 && color.getGreen() == 0 && color.getBlue() == 0) {
             room.turnOff();
@@ -50,26 +61,16 @@ public class HueManager {
                             .on()
             );
         }
-
-        System.out.println("UPDATING STATE");
-    }
-
-    public void storeCredentials(String hueAddress, String apiKey) {
-        getPlugin().getConfig().set("hue.address", hueAddress);
-        getPlugin().getConfig().set("hue.api-key", apiKey);
-        getPlugin().saveConfig();
     }
 
     public boolean connect() {
-        String address = getPlugin().getConfig().getString("hue.address");
-        String apiKey = getPlugin().getConfig().getString("hue.api-key");
-
-        if (address == null || apiKey == null) {
+        HueCredentials credentials = loadCredentials().orElse(null);
+        if (credentials == null) {
             return false;
         }
 
         try {
-            hue = new Hue(address, apiKey);
+            hue = new Hue(credentials.address(), credentials.apiKey());
             hue.refresh();
 
             return true;
@@ -101,5 +102,58 @@ public class HueManager {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    public Stream<String> getAvailableRoomNames() {
+        if (hue == null) {
+            return Stream.empty();
+        }
+
+        return hue.getRooms().stream()
+                .map(Room::getName);
+    }
+
+    public void storeCredentials(HueCredentials credentials) {
+        getPlugin().getConfig().set("hue.address", credentials.address());
+        getPlugin().getConfig().set("hue.api-key", credentials.apiKey());
+        getPlugin().saveConfig();
+    }
+
+    public Optional<HueCredentials> loadCredentials() {
+        String address = getPlugin().getConfig().getString("hue.address");
+        String apiKey = getPlugin().getConfig().getString("hue.api-key");
+
+        if (address == null || apiKey == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new HueCredentials(address, apiKey));
+    }
+
+    public void setEnabledFor(Player player, boolean enabled) {
+        player.getPersistentDataContainer().set(hueAmbianceEnabledKey, INTEGER, enabled ? 1 : 0);
+    }
+
+    public boolean isEnabledFor(Player player) {
+        return player.getPersistentDataContainer().getOrDefault(hueAmbianceEnabledKey, INTEGER, 0) != 0;
+    }
+
+    public void setRoomNameFor(Player player, String roomName) {
+        player.getPersistentDataContainer().set(hueAmbianceRoomNameKey, STRING, roomName);
+    }
+
+    public Optional<String> getRoomNameFor(Player player) {
+        return Optional.ofNullable(
+                player.getPersistentDataContainer().get(hueAmbianceRoomNameKey, STRING)
+        );
+    }
+
+    public Optional<Room> getRoomFor(Player player) {
+        if (hue == null) {
+            return Optional.empty();
+        }
+
+        return getRoomNameFor(player)
+                .flatMap(hue::getRoomByName);
     }
 }

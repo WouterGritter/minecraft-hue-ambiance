@@ -3,5 +3,9 @@ name: hue-ambiance
 version: 0.1
 api-version: 1.19
 commands:
-  connecthue:
+  hueconnect:
     description: 'Connect to the Hue bridge.'
+  hueenable:
+    description: 'Enable or disable Hue ambiance for yourself.'
+  hueroom:
+    description: 'View or edit the Hue room connected to yourself.'

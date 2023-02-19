@@ -27,6 +27,11 @@ public class ColorManager implements Listener {
         Bukkit.getOnlinePlayers().forEach(this::setupBridge);
     }
 
+    public void reloadBridge(Player player) {
+        disposeBridge(player);
+        setupBridge(player);
+    }
+
     private void setupBridge(Player player) {
         if (!getPlugin().getHueManager().canSetStateFor(player)) {
             return;

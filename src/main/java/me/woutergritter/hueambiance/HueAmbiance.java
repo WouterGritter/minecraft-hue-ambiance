@@ -1,7 +1,9 @@
 package me.woutergritter.hueambiance;
 
 import me.woutergritter.hueambiance.coloreffect.ColorManager;
-import me.woutergritter.hueambiance.commands.ConnecthueCommand;
+import me.woutergritter.hueambiance.commands.HueconnectCommand;
+import me.woutergritter.hueambiance.commands.HueenableCommand;
+import me.woutergritter.hueambiance.commands.HueroomCommand;
 import me.woutergritter.hueambiance.hue.HueManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,6 +14,7 @@ public class HueAmbiance extends JavaPlugin {
     private static HueAmbiance instance;
 
     private HueManager hueManager;
+    private ColorManager colorManager;
 
     @Override
     public void onEnable() {
@@ -27,11 +30,13 @@ public class HueAmbiance extends JavaPlugin {
             getLogger().info("Could not connect to Hue bridge.");
         }
 
-        new ColorManager();
+        colorManager = new ColorManager();
 
         // Register commands
         Set.of(
-                new ConnecthueCommand()
+                new HueconnectCommand(),
+                new HueenableCommand(),
+                new HueroomCommand()
         ).forEach(c -> c.register(this));
     }
 
@@ -42,6 +47,10 @@ public class HueAmbiance extends JavaPlugin {
 
     public HueManager getHueManager() {
         return hueManager;
+    }
+
+    public ColorManager getColorManager() {
+        return colorManager;
     }
 
     public static HueAmbiance getPlugin() {

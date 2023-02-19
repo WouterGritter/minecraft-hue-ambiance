@@ -4,9 +4,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class Command implements CommandExecutor {
+import java.util.List;
+
+public abstract class Command implements CommandExecutor, TabCompleter {
 
     private final String command;
     private final boolean runInThread;
@@ -16,7 +19,13 @@ public abstract class Command implements CommandExecutor {
         this.runInThread = runInThread;
     }
 
+    public Command(String command) {
+        this(command, false);
+    }
+
     public abstract void execute(CommandContext context);
+
+    public abstract List<String> tabComplete(CommandContext context);
 
     public void executeSafely(CommandContext context) {
         try {
@@ -42,6 +51,12 @@ public abstract class Command implements CommandExecutor {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        var context = new CommandContext(sender, args);
+        return tabComplete(context);
+    }
+
     public void register(JavaPlugin plugin) {
         PluginCommand cmd = plugin.getCommand(command);
         if (cmd == null) {
@@ -49,5 +64,6 @@ public abstract class Command implements CommandExecutor {
         }
 
         cmd.setExecutor(this);
+        cmd.setTabCompleter(this);
     }
 }

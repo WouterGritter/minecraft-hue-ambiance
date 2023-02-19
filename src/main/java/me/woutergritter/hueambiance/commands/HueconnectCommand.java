@@ -2,7 +2,11 @@ package me.woutergritter.hueambiance.commands;
 
 
 import io.github.zeroone3010.yahueapi.HueBridge;
+import me.woutergritter.hueambiance.hue.HueCredentials;
+import org.bukkit.Bukkit;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -12,10 +16,10 @@ import static me.woutergritter.hueambiance.HueAmbiance.getPlugin;
 import static org.bukkit.ChatColor.GREEN;
 import static org.bukkit.ChatColor.RED;
 
-public class ConnecthueCommand extends Command {
+public class HueconnectCommand extends Command {
 
-    public ConnecthueCommand() {
-        super("connecthue", true);
+    public HueconnectCommand() {
+        super("hueconnect", true);
     }
 
     @Override
@@ -40,15 +44,21 @@ public class ConnecthueCommand extends Command {
             return;
         }
 
-        getPlugin().getHueManager().storeCredentials(hueAddress, apiKey);
+        getPlugin().getHueManager().storeCredentials(new HueCredentials(hueAddress, apiKey));
         context.sendMessage("Stored credentials. Connecting to Hue bridge..", GREEN);
 
         boolean success = getPlugin().getHueManager().connect();
         if (success) {
+            Bukkit.getOnlinePlayers().forEach(getPlugin().getColorManager()::reloadBridge);
             context.sendMessage("Connected to Hue bridge.", GREEN);
         } else {
             context.sendMessage("Could not connect to Hue bridge.", RED);
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandContext context) {
+        return Collections.emptyList();
     }
 
     private Optional<String> discoverHueAddress(CommandContext context) {

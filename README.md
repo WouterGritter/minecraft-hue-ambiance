@@ -2,7 +2,7 @@
 
 A plugin to reflect the minecraft world in Philips Hue color lighting.
 
-This plugin aims to update Philips Hue color lights according to in-game events. Currently the following things have an
+This plugin aims to update Philips Hue color lights according to in-game events. Currently, the following things have an
 effect on the light color:
 
 - Current biome (colors synthesised by Chat-GPT!)
@@ -16,8 +16,8 @@ More are being added...
 The plugin implements a priority system to give certain effects priority over others (temporary effects generally have a
 high priority, while background effects generally have a low priority).
 
-Note: The plugin currently only supports one hardcoded player and hue room name. I'll be adding support for multiple
-players later (something like a command to add light identifiers, eg. hue room names/light names per player).
+The plugin supports multiple players, and the hue ambiance feature can be enabled/disabled per player. Each player needs
+their own Hue "room" assigned.
 
 # Connecting to hue bridge
 
@@ -26,3 +26,16 @@ provided, it will search for an available hub on the network.
 
 You can also manually configure the hub address and api key in the config using the fields `hue.address`
 and `hue.api-key`.
+
+# Commands
+
+The plugin exposes 3 commands to configure the global and per-player functionality of the plugin.
+
+Note: The plugin currently does not check any permissions, because the plugin is intended to be used
+in a trusted environment.
+
+`/hueconnect [address]` - Connect to a Hue bridge.
+
+`/hueenable <enable | disable>` - Enable or disable the Hue ambiance functionality.
+
+`/hueroom <room>` - Set the linked room (autocomplete available).

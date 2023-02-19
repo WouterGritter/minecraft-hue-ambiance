@@ -1,10 +1,10 @@
 package me.woutergritter.hueambiance.commands;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +16,14 @@ public class CommandContext {
     public CommandContext(CommandSender sender, String[] arguments) {
         this.sender = sender;
         this.arguments = List.of(arguments);
+    }
+
+    public void sendMessage(BaseComponent component) {
+        sender.spigot().sendMessage(component);
+    }
+
+    public void sendMessage(BaseComponent... component) {
+        sender.spigot().sendMessage(component);
     }
 
     public void sendMessage(String message) {
@@ -39,7 +47,12 @@ public class CommandContext {
     }
 
     public List<String> getArguments() {
-        return Collections.unmodifiableList(arguments);
+        return arguments;
+    }
+
+    public Optional<String> getArgumentsAsString() {
+        return Optional.of(String.join(" ", arguments))
+                .filter(s -> !s.isBlank());
     }
 
     public Optional<String> getArgument(int index) {
@@ -48,5 +61,13 @@ public class CommandContext {
         }
 
         return Optional.of(arguments.get(index));
+    }
+
+    public int getArgumentAmount() {
+        return arguments.size();
+    }
+
+    public boolean hasArguments() {
+        return !arguments.isEmpty();
     }
 }
